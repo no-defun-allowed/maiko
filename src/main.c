@@ -31,6 +31,10 @@
 #define R_OK 04
 #endif /* DOS */
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 #ifdef MAIKO_ENABLE_ETHERNET
 #if defined(USE_NIT)
 #include <net/nit.h> /* needed for Ethernet stuff below */
@@ -386,6 +390,9 @@ int main(int argc, char *argv[])
     }
 #endif /* DOS */
   }
+#ifdef __EMSCRIPTEN__
+  strcpy(sysout_name, "full.sysout");
+#endif
   if (access(sysout_name, R_OK)) {
     perror("Couldn't find a sysout to run");
     fprintf(stderr, "%s%s", helpstring, nethubHelpstring);

@@ -33,6 +33,10 @@
 #include <sys/time.h>
 #endif /* DOS */
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 #include "lispemul.h"
 #include "emlglob.h"
 #include "address.h"
@@ -181,6 +185,7 @@ static int pseudoTimerAsyncCountdown = MAIKO_TIMER_ASYNC_EMULATION_INSNS_COUNTDO
 
 void dispatch(void) {
   InstPtr pccache;
+  int cycles = 0;
 
 #if defined(OPDISP)
   static const void* optable[256] = {
@@ -257,8 +262,10 @@ op_ufn : {
   OP_FN_COMMON
 
 /* DISPATCH "LOOP" */
-
 nextopcode:
+#ifdef __EMSCRIPTEN__
+    if (++cycles % 1000000 == 0) emscripten_sleep(1);
+#endif
 #ifdef MYOPTRACE
   if ((struct fnhead *)NativeAligned4FromLAddr(0x2ed600) == FuncObj) {
     quick_stack_check();
@@ -288,7 +295,6 @@ nextopcode:
 	  pseudoTimerAsyncCountdown = insnsCountdownForTimerAsyncEmulation;
   }
 #endif
-
   switch (Get_BYTE_PCMAC0) {
     case 000:
     case000 : { goto op_ufn; } /* unused */

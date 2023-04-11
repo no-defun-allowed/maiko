@@ -295,7 +295,9 @@ void subr_settime(LispPTR args[])
   struct timeval timev;
   timev.tv_sec = *((int *)NativeAligned4FromLAddr(args[0])) - UNIX_ALTO_TIME_DIFF;
   timev.tv_usec = 0;
+#ifndef __EMSCRIPTEN__
   settimeofday(&timev, NULL);
+#endif
 #endif
 } /* end subr_settime */
 

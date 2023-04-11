@@ -171,7 +171,7 @@ LispPTR CHAR_closefile(LispPTR *args)
 
 LispPTR CHAR_ioctl(LispPTR *args)
 {
-#ifndef DOS
+#ifdef MAIKO_BAD_FS
   int fd, request;
   void *data;
   int rval;

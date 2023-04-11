@@ -6,6 +6,10 @@
  * the platform.
  */
 
+#ifdef DOS
+#  define MAIKO_BAD_FS 1
+#endif
+
 #if defined(__APPLE__) && defined(__MACH__)
 #  define MAIKO_OS_MACOS 1
 #  define MAIKO_OS_NAME "macOS"
@@ -43,6 +47,16 @@
 #  define MAIKO_OS_NAME "Linux"
 #  define MAIKO_OS_UNIX_LIKE 1
 #  define MAIKO_OS_DETECTED 1
+#endif
+
+#ifdef __EMSCRIPTEN__
+#  define MAIKO_OS_LINUX 1
+#  define MAIKO_OS_NAME "Emscripten"
+#  define MAIKO_EMULATE_TIMER_INTERRUPTS 1
+#  define MAIKO_EMULATE_ASYNC_INTERRUPTS 1
+#  define MAIKO_BAD_FS 1
+#  define MAIKO_OS_UNIX_LIKE 1
+#  define MAIKO_OS_DETECTED
 #endif
 
 #ifdef __NetBSD__
@@ -88,6 +102,12 @@
 #  define MAIKO_ARCH_X86_64 1
 #  define MAIKO_ARCH_NAME "x86_64"
 #  define MAIKO_ARCH_WORD_BITS 64
+#  define MAIKO_ARCH_DETECTED 1
+#endif
+
+#ifdef __EMSCRIPTEN__
+#  define MAIKO_ARCH_NAME "Emscripten"
+#  define MAIKO_ARCH_WORD_BITS (sizeof(void*) * 8)
 #  define MAIKO_ARCH_DETECTED 1
 #endif
 

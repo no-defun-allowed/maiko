@@ -659,7 +659,7 @@ LispPTR COM_closefile(LispPTR *args)
       sprintf(file, "%s\\%s", dir, dirp.name);
     }
   }
-#ifndef DOS /* effectively NEVER, since we're in an ifdef DOS */
+#ifndef MAIKO_BAD_FS /* effectively NEVER, since we're in an ifdef DOS */
   time[0].tv_sec = (long)sbuf.st_atime;
   time[0].tv_usec = 0L;
   time[1].tv_sec = (long)ToUnixTime(cdate);
@@ -670,7 +670,7 @@ LispPTR COM_closefile(LispPTR *args)
     *Lisp_errno = errno;
     return (NIL);
   }
-#ifndef DOS
+#ifndef MAIKO_BAD_FS
   TIMEOUT(rval = utimes(file, time));
   if (rval != 0) {
     *Lisp_errno = errno;
@@ -804,7 +804,9 @@ LispPTR COM_closefile(LispPTR *args)
     return (NIL);
   }
 
+#ifndef MAIKO_BAD_FS
   TIMEOUT(rval = utimes(file, time));
+#endif
   if (rval != 0) {
     *Lisp_errno = errno;
     return (NIL);
@@ -840,6 +842,9 @@ LispPTR COM_closefile(LispPTR *args)
 
 LispPTR DSK_getfilename(LispPTR *args)
 {
+#ifdef __EMSCRIPTEN__
+  return NIL;
+#endif
   char *base;
   size_t len;
   int rval;
@@ -1859,7 +1864,7 @@ LispPTR COM_setfileinfo(LispPTR *args)
         *Lisp_errno = errno;
         return (NIL);
       }
-#ifndef DOS
+#ifndef MAIKO_BAD_FS
       date = LispNumToCInt(args[2]);
       time[0].tv_sec = (long)sbuf.st_atime;
       time[0].tv_usec = 0L;

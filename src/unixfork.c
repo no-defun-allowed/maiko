@@ -73,6 +73,10 @@ static inline ssize_t SAFEREAD(int f, char *b, size_t c)
 /*									*/
 /************************************************************************/
 
+#ifdef __EMSCRIPTEN__
+#define getusershell() "ain't got one"
+#endif
+
 /* Creates a PTY connection to a shell */
 
 static int ForkUnixShell(int slot, char *PtySlave, char *termtype, char *shellarg)

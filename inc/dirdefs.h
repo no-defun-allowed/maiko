@@ -24,6 +24,10 @@
  * enumerating operation is aborted.
  */
 
+#ifdef __EMSCRIPTEN__
+#define MAXNAMLEN 256
+#endif
+
 typedef struct fprop {
   unsigned length;   /* Byte length of this file. */
   unsigned wdate;    /* Written (Creation) date in Lisp sense. */

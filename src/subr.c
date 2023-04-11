@@ -30,6 +30,9 @@
 
 #include <stdio.h>         // for printf, sprintf, NULL
 #include <time.h>          // for nanosleep, timespec
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h> // for emscripten_sleep
+#endif
 #include "adr68k.h"        // for NativeAligned2FromLAddr, NativeAligned4FromLAddr
 #include "arith.h"         // for N_GETNUMBER, ARITH_SWITCH
 #include "bbtsubdefs.h"    // for bitblt_bitmap, bitbltsub, bitshade_bitmap
@@ -799,7 +802,11 @@ void OP_subrcall(int subr_no, int argnum) {
           break;
       }
       rqts.tv_nsec = sleepnanos;
+#ifdef __EMSCRIPTEN__
+      emscripten_sleep(1 + rqts.tv_nsec / 1000000);
+#else
       nanosleep(&rqts, NULL);
+#endif
       TopOfStack = ATOM_T;
       break;
   }

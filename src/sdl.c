@@ -1,5 +1,10 @@
+#ifndef __EMSCRIPTEN__
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_keycode.h>
+#else
+#include <SDL.h>
+#include <SDL_keycode.h>
+#endif
 #include <assert.h>
 #include <limits.h>
 #include "sdldefs.h"
@@ -658,7 +663,12 @@ void process_SDLevents() {
       case SDL_MOUSEWHEEL:
         printf("mousewheel mouse %d x %d y %d direction %s\n", event.wheel.which, event.wheel.x,
                event.wheel.y,
-               event.wheel.direction == SDL_MOUSEWHEEL_NORMAL ? "normal" : "flipped");
+#ifdef __EMSCRIPTEN__
+               "something"
+#else
+               event.wheel.direction == SDL_MOUSEWHEEL_NORMAL ? "normal" : "flipped"
+#endif
+               );
         break;
         /* case SDL_KEYMAPCHANGED: */
         /*   printf("SDL_KEYMAPCHANGED\n"); break; */
@@ -709,7 +719,9 @@ int init_SDL(char *windowtitle, int w, int h, int s) {
   SDL_SetRenderDrawColor(sdl_renderer, 127, 127, 127, 255);
   SDL_RenderClear(sdl_renderer);
   SDL_RenderPresent(sdl_renderer);
+#ifndef __EMSCRIPTEN__
   SDL_RenderSetScale(sdl_renderer, 1.0, 1.0);
+#endif
   printf("Creating texture...\n");
   sdl_pixelformat = SDL_AllocFormat(sdl_rendererinfo.texture_formats[0]);
   sdl_texture = SDL_CreateTexture(sdl_renderer, sdl_pixelformat->format,
